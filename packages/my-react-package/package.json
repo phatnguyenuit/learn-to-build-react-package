@@ -2,9 +2,16 @@
   "name": "my-react-package",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.js",
+  "types": "./lib/esm/index.d.ts",
+  "files": [
+    "/lib"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepack": "yarn build",
+    "build": "rollup -c",
+    "watch": "rollup -cw"
   },
   "keywords": [],
   "author": "PhatNguyen <phatnt.uit@gmail.com> (https://phatnguyenuit.github.io)",

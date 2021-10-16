@@ -16,10 +16,12 @@ Today, I am going to show you how to build a React library with TypeScript. Let'
     - [2. Configure lerna](#2-configure-lerna)
     - [3. Create new package packages/my-react-package](#3-create-new-package-packagesmy-react-package)
     - [4. Install peerDependencies for packages/my-react-package](#4-install-peerdependencies-for-packagesmy-react-package)
-    - [5. Configure TypeScript for **`my-react-packages`**](#5-configure-typescript-for-my-react-packages)
+    - [5. Configure TypeScript for **`my-react-package`**](#5-configure-typescript-for-my-react-package)
     - [6. Configure Rollup to bundle our package](#6-configure-rollup-to-bundle-our-package)
-    - [7. Write code for our package](#7-write-code-for-our-package)
-    - [8. Declare module definition in the package.json file](#8-declare-module-definition-in-the-packagejson-file)
+    - [7. Declare module definition in the package.json file](#7-declare-module-definition-in-the-packagejson-file)
+    - [8. Write code for our package](#8-write-code-for-our-package)
+    - [9. Bundle](#9-bundle)
+  - [Usages](#usages)
   - [Conclusion](#conclusion)
   - [References](#references)
 
@@ -42,6 +44,7 @@ Today, I am going to show you how to build a React library with TypeScript. Let'
   "keywords": [],
   "author": "PhatNguyen <phatnt.uit@gmail.com> (https://phatnguyenuit.github.io)",
   "workspaces": [
+    "examples/*",
     "packages/*"
   ],
   "devDependencies": {
@@ -58,13 +61,16 @@ Today, I am going to show you how to build a React library with TypeScript. Let'
 #### Two important points
 
 - **`private`** should be turned to **`true`**
-- **`workspaces`** contains workspace paths. I use **`packages/*`** to provide that my packages should be implemented under the **`packages`** folder
+- **`workspaces`** contains workspace paths. I use **`packages/*`** to provide that my packages should be implemented under the **`packages`** folder, and **`examples/*`** for all examples with our built libraries
 
 #### Folder structure
 
 ```sh
 ./learn-to-build-react-package
  |  |-- package.json
+ |  |-- examples
+ |  |   |-- example-app
+ |  |   |   |-- package.json
  |  |-- packages
  |  |   |-- my-react-package
  |  |   |   |-- package.json
@@ -110,7 +116,7 @@ Why do we use **`peerDependencies`** ?
 
 => It is because our package scope is just a MODULE that can be installed by any projects and which must have our package **`peerDependencies`** installed also.
 
-Now our **`my-react-packages`** *peerDependencies* section in the __package.json__ file looks like below
+Now our **`my-react-package`** *peerDependencies* section in the __package.json__ file looks like below
 
 ```json
   "peerDependencies": {
@@ -121,9 +127,9 @@ Now our **`my-react-packages`** *peerDependencies* section in the __package.json
 
 [Go back ⏪](#table-of-contents)
 
-### 5. Configure TypeScript for **`my-react-packages`**
+### 5. Configure TypeScript for **`my-react-package`**
 
-Our **my-react-packages/tsconfig.json** file should look like below:
+Our **my-react-package/tsconfig.json** file should look like below:
 
 ```json
 {
@@ -163,39 +169,39 @@ Some highlights:
 
 - Install devDependencies
 
-```sh
-my-react-packages:~ yarn add -D rollup rollup-plugin-typescript2 typescript
-```
+  ```sh
+  my-react-package:~ yarn add -D rollup rollup-plugin-typescript2 typescript
+  ```
 
-- Create new file **`my-react-packages/rollup.config.js`**
+- Create new file **`my-react-package/rollup.config.js`**
 
-```javascript
-import typescript from 'rollup-plugin-typescript2';
-import pkg from './package.json';
+  ```javascript
+  import typescript from 'rollup-plugin-typescript2';
+  import pkg from './package.json';
 
-export default {
-  input: 'src/index.ts',
-  output: [
-    {
-      file: "./lib/cjs/index.js",
-      format: 'cjs',
-    },
-    {
-      file: "./lib/esm/index.js",
-      format: 'es',
-    },
-  ],
-  external: [
-    ...Object.keys(pkg.peerDependencies || {}),
-  ],
-  plugins: [
-    typescript({
-      typescript: require('typescript'),
-    }),
-  ],
-};
+  export default {
+    input: 'src/index.ts',
+    output: [
+      {
+        file: "./lib/cjs/index.js",
+        format: 'cjs',
+      },
+      {
+        file: "./lib/esm/index.js",
+        format: 'es',
+      },
+    ],
+    external: [
+      ...Object.keys(pkg.peerDependencies || {}),
+    ],
+    plugins: [
+      typescript({
+        typescript: require('typescript'),
+      }),
+    ],
+  };
 
-```
+  ```
 
 - Our module exposes two types of module system: CommonJS - cjs and ECMAScript - esm
 - All packages in the **`peerDependencies`** section will be treated as external dependencies. It means Rollup does not include them in the bundling process.
@@ -203,13 +209,7 @@ export default {
 
 [Go back ⏪](#table-of-contents)
 
-### 7. Write code for our package
-
-// TODO
-
-[Go back ⏪](#table-of-contents)
-
-### 8. Declare module definition in the package.json file
+### 7. Declare module definition in the package.json file
 
 ```json
 {
@@ -229,22 +229,140 @@ export default {
 
 [Go back ⏪](#table-of-contents)
 
+### 8. Write code for our package
+
+- **_my-react-packages/src/Hello.tsx_**
+
+  ```tsx
+  import React from 'react';
+
+  export interface HelloProps {
+    name: string;
+  }
+
+  const Hello: React.FC<HelloProps> = ({ name }) => <span>Hello {name}!</span>;
+
+  export default Hello;
+
+  ```
+
+- **_my-react-packages/src/index.ts_**
+
+  ```typescript
+  export { default as Hello } from './Hello'; // export the default export
+  export * from './Hello'; // export all named exports
+
+  ```
+
+[Go back ⏪](#table-of-contents)
+
+### 9. Bundle
+
+- In the `my-react-package/package.json` file add some useful commands:
+
+  ```json
+  {
+    "scripts": {
+      "prepack": "yarn build",
+      "build": "rollup -c",
+      "watch": "rollup -cw"
+    }
+  }
+  ```
+
+  - `prepack` Run before packing library into a package file. Eg: `packages\my-react-package\my-react-package-1.0.0.tgz`
+  - `build` Build source code
+  - `watch` Watch & build changes
+
+- In the root workspace `package.json` file add some useful commands:
+
+  ```json
+  {
+    "scripts": {
+      "build": "lerna run build --scope my-react-package",
+      "watch": "lerna run watch --scope my-react-package",
+      "package": "lerna exec --scope my-react-package -- npm pack"
+    }
+  }
+  ```
+
+  - `build` Run build **`my-react-package`**
+  - `watch` Watch & build changes **`my-react-package`**. This is helpful command in development process to build library if any changes occur.
+  - `package` Pack **`my-react-package`** into a package file
+
+[Go back ⏪](#table-of-contents)
+
+## Usages
+
+- Create new React App (prefer to TypeScript template) under **`./examples`** folders:
+
+  ```sh
+  create-react-app example-app --template typescript
+  ```
+
+- Install package **`my-react-package`** into **`example-app`**:
+
+  ```sh
+  npx lerna add my-react-package --scope example-app
+  ```
+
+  I use `lerna add` command here to get **`my-react-package`** installed into **`example-app`** and have latest source code of **`my-react-package`** if any new bundles
+
+- Now just import and see how it works on **`examples/example-app/src/App.tsx`**:
+
+  ```tsx
+  import { Hello } from 'my-react-package';
+
+  import './App.css';
+
+  function App() {
+    return (
+      <div className="App">
+        <Hello name="Fast" />
+      </div>
+    );
+  }
+
+  export default App;
+
+  ```
+
+In the `development` phase, you can write code and example **`parallelly`** by using:
+
+- Start **`example-app`**:
+
+  ```sh
+  cd examples/example-app;
+  yarn start;
+  ```
+
+- Watch and build our package if any changes
+
+  ```sh
+  yarn watch
+  ```
+
+So now, when you want to develop new components or hooks or anything else, you just write the code and new bundle will be built **automatically**.
+
+[Go back ⏪](#table-of-contents)
+
 ## Conclusion
 
-To sum it up, there are 8 steps to build a React Library with TypeScript:
+To sum it up, there are 9 steps to build a React Library with TypeScript:
 
 1. Create new project with package.json file
 2. Configure lerna
 3. Create new package packages/my-react-package
 4. Install peerDependencies for packages/my-react-package
-5. Configure TypeScript for **`my-react-packages`**
+5. Configure TypeScript for **`my-react-package`**
 6. Configure Rollup to bundle our package
-7. Write code for our package
-8. Declare module definition in the package.json file
+7. Declare module definition in the package.json file
+8. Write code for our package
+9. Bundle
 
 Last but not least, thank you for reading through this section! I hope you find this article helpful and solve your concerns when trying to build a React library.
 
-Here is [my full example code](//link) on GitHub repositories.
+Here is [my full example code](https://github.com/phatnguyenuit/learn-to-build-react-package) on GitHub repositories.
 Reaching to it if you want to explore more.
 
 If you have any questions or feedback, do not hesitate to leave a comment in the box below.
@@ -261,5 +379,6 @@ Thank you and see you next time!
 - [**`NodeJS peerDependencies`**](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#peerdependencies)
 - [**`ECMAScript modules - esm`**](https://nodejs.org/api/esm.html#esm_modules_ecmascript_modules)
 - [**`CommonJS - cjs`**](https://nodejs.org/docs/latest/api/modules.html#modules_modules_commonjs_modules)
+- [**`EcmaScript Exports`**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export)
 
 [Go back ⏪](#table-of-contents)

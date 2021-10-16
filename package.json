@@ -5,8 +5,14 @@
   "keywords": [],
   "author": "PhatNguyen <phatnt.uit@gmail.com> (https://phatnguyenuit.github.io)",
   "workspaces": [
+    "examples/*",
     "packages/*"
   ],
+  "scripts": {
+    "build": "lerna run build --scope my-react-package",
+    "watch": "lerna run watch --scope my-react-package",
+    "package": "lerna exec --scope my-react-package -- npm pack"
+  },
   "devDependencies": {
     "@types/react": "^17.0.6",
     "@types/react-dom": "^17.0.5",
