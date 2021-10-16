@@ -1,6 +1,6 @@
 # How to build a React library with TypeScript
 
-Today, I am going to show you how to build a React library with TypeScript. Let's get started!
+Today, I am going to show you how to build **a React library** with **TypeScript**. Let's get started!
 
 ![React component](https://images.unsplash.com/photo-1619410283995-43d9134e7656?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=870&q=80)
 
