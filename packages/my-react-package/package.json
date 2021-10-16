@@ -10,7 +10,9 @@
   ],
   "scripts": {
     "prepack": "yarn build",
+    "prebuild": "yarn clean",
     "build": "rollup -c",
+    "clean": "rimraf lib my-react-package-*.tgz",
     "watch": "rollup -cw"
   },
   "keywords": [],
@@ -21,8 +23,15 @@
     "react-dom": "^17.0.2"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.5",
+    "@types/lodash": "^4.14.175",
+    "rimraf": "^3.0.2",
     "rollup": "^2.49.0",
     "rollup-plugin-typescript2": "^0.30.0",
     "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
   }
 }

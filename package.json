@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "lerna run build --scope my-react-package",
+    "clean": "lerna run clean --scope my-react-package",
     "watch": "lerna run watch --scope my-react-package",
     "package": "lerna exec --scope my-react-package -- npm pack"
   },
