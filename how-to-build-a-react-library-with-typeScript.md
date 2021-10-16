@@ -18,7 +18,7 @@ Today, I am going to show you how to build a React library with TypeScript. Let'
     - [4. Install peerDependencies for packages/my-react-package](#4-install-peerdependencies-for-packagesmy-react-package)
     - [5. Configure TypeScript for **`my-react-package`**](#5-configure-typescript-for-my-react-package)
     - [6. Configure Rollup to bundle our package](#6-configure-rollup-to-bundle-our-package)
-    - [7. Declare module definition in the package.json file](#7-declare-module-definition-in-the-packagejson-file)
+    - [7. Declare module definition in the packages/my-react-package/package.json file](#7-declare-module-definition-in-the-packagesmy-react-packagepackagejson-file)
     - [8. Write code for our package](#8-write-code-for-our-package)
     - [9. Bundle](#9-bundle)
   - [Usages](#usages)
@@ -209,7 +209,7 @@ Some highlights:
 
 [Go back ⏪](#table-of-contents)
 
-### 7. Declare module definition in the package.json file
+### 7. Declare module definition in the packages/my-react-package/package.json file
 
 ```json
 {
@@ -249,8 +249,8 @@ Some highlights:
 - **_my-react-packages/src/index.ts_**
 
   ```typescript
-  export { default as Hello } from './Hello'; // export the default export
-  export * from './Hello'; // export all named exports
+  export { default as Hello } from './Hello'; // export the default export from './Hello'
+  export * from './Hello'; // export all named exports from './Hello'
 
   ```
 
@@ -270,7 +270,7 @@ Some highlights:
   }
   ```
 
-  - `prepack` Run before packing library into a package file. Eg: `packages\my-react-package\my-react-package-1.0.0.tgz`
+  - `prepack` Run before packing library into a package file. Eg: `packages/my-react-package/my-react-package-1.0.0.tgz`
   - `build` Build source code
   - `watch` Watch & build changes
 
