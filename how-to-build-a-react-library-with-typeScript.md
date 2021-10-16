@@ -61,7 +61,7 @@ Today, I am going to show you how to build a React library with TypeScript. Let'
 #### Two important points
 
 - **`private`** should be turned to **`true`**
-- **`workspaces`** contains workspace paths. I use **`packages/*`** to provide that my packages should be implemented under the **`packages`** folder, and **`examples/*`** for all examples with our built libraries
+- **`workspaces`** contains workspace paths. I use **`packages/*`** to provide that my packages should be implemented under the **`packages`** folder, and **`examples/*`** for all examples with my built libraries
 
 #### Folder structure
 
