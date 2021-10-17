@@ -170,7 +170,8 @@ Some highlights:
 - Install devDependencies
 
   ```sh
-  my-react-package:~ yarn add -D rollup rollup-plugin-typescript2 typescript
+  cd packages/my-react-package;
+  yarn add -D rollup rollup-plugin-typescript2 typescript;
   ```
 
 - Create new file **`my-react-package/rollup.config.js`**
