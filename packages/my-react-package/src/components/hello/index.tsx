@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import cssClasses from "./styles.module.css";
-import scssClasses from "./styles.module.scss";
+import cssClasses from './styles.module.css';
+import scssClasses from './styles.module.scss';
 
 const Hello: React.FC<HelloProps> = ({ name }) => {
   const [count, setCount] = useState(3);

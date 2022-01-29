@@ -297,9 +297,9 @@ These above types support for importing css modules, scss modules.
   ```tsx
   import React from 'react';
   // Import css modules
-  import cssClasses from "./styles.module.css";
+  import cssClasses from './styles.module.css';
   // Import scss modules
-  import scssClasses from "./styles.module.scss";
+  import scssClasses from './styles.module.scss';
 
   export interface HelloProps {
     name: string;
