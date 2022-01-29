@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+
+import cssClasses from "./styles.module.css";
+import scssClasses from "./styles.module.scss";
 
 const Hello: React.FC<HelloProps> = ({ name }) => {
   const [count, setCount] = useState(3);
@@ -12,20 +15,24 @@ const Hello: React.FC<HelloProps> = ({ name }) => {
     setIntervalId(id);
 
     return () => {
-      clearInterval(id);
+      window.clearInterval(id);
     };
   }, []);
 
   useEffect(() => {
     if (count === 0) {
       setIntervalId(undefined);
-      clearInterval(intervalId);
+      window.clearInterval(intervalId);
     }
   }, [count]);
 
   const message = count === 0 ? `Hello ${name}, from TypeScript.` : count;
 
-  return <p>{message}</p>;
+  return (
+    <div className={scssClasses.helloScss}>
+      <p className={cssClasses.helloCss}>{message}</p>
+    </div>
+  );
 };
 
 export default Hello;

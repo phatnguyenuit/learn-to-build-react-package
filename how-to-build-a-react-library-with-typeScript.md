@@ -17,6 +17,8 @@ Today, I am going to show you how to build **a React library** with **TypeScript
     - [3. Create new package packages/my-react-package](#3-create-new-package-packagesmy-react-package)
     - [4. Install peerDependencies for packages/my-react-package](#4-install-peerdependencies-for-packagesmy-react-package)
     - [5. Configure TypeScript for **`my-react-package`**](#5-configure-typescript-for-my-react-package)
+      - [Our **my-react-package/tsconfig.json** file should look like below:](#our-my-react-packagetsconfigjson-file-should-look-like-below)
+      - [Create new **my-react-package/src/global.d.ts** to define global type definitions](#create-new-my-react-packagesrcglobaldts-to-define-global-type-definitions)
     - [6. Configure Rollup to bundle our package](#6-configure-rollup-to-bundle-our-package)
     - [7. Declare module definition in the packages/my-react-package/package.json file](#7-declare-module-definition-in-the-packagesmy-react-packagepackagejson-file)
     - [8. Write code for our package](#8-write-code-for-our-package)
@@ -129,7 +131,7 @@ Now our **`my-react-package`** *peerDependencies* section in the __package.json_
 
 ### 5. Configure TypeScript for **`my-react-package`**
 
-Our **my-react-package/tsconfig.json** file should look like below:
+#### Our **my-react-package/tsconfig.json** file should look like below:
 
 ```json
 {
@@ -163,6 +165,23 @@ Some highlights:
 - Turn on `declaration` to extract type definitions
 - Folder "**node_modules**" and "**lib**" must be excluded while compiling TypeScript to JavaScript.
 
+#### Create new **my-react-package/src/global.d.ts** to define global type definitions
+
+```typescript
+declare module '*.module.css' {
+    const classes: { readonly [key: string]: string };
+    export default classes;
+}
+
+declare module '*.module.scss' {
+    const classes: { readonly [key: string]: string };
+    export default classes;
+}
+
+```
+
+These above types support for importing css modules, scss modules.
+
 [Go back ⏪](#table-of-contents)
 
 ### 6. Configure Rollup to bundle our package
@@ -170,34 +189,41 @@ Some highlights:
 - Install devDependencies
 
   ```sh
-  cd packages/my-react-package;
-  yarn add -D rollup rollup-plugin-typescript2 typescript;
+  my-react-package:~ yarn add -D rollup typescript rollup-plugin-typescript2 @rollup/plugin-node-resolve @rollup/plugin-commonjs rollup-plugin-postcss postcss node-sass
   ```
 
 - Create new file **`my-react-package/rollup.config.js`**
 
+
   ```javascript
-  import typescript from 'rollup-plugin-typescript2';
-  import pkg from './package.json';
+  import typescript from "rollup-plugin-typescript2";
+  import { nodeResolve } from "@rollup/plugin-node-resolve";
+  import commonjs from "@rollup/plugin-commonjs";
+  import postCSS from "rollup-plugin-postcss";
+
+  import pkg from "./package.json";
 
   export default {
-    input: 'src/index.ts',
+    input: "src/index.ts",
     output: [
       {
         file: "./lib/cjs/index.js",
-        format: 'cjs',
+        format: "cjs",
       },
       {
         file: "./lib/esm/index.js",
-        format: 'es',
+        format: "es",
       },
     ],
-    external: [
-      ...Object.keys(pkg.peerDependencies || {}),
-    ],
+    external: [...Object.keys(pkg.peerDependencies || {})],
     plugins: [
+      nodeResolve(),
+      commonjs(),
       typescript({
-        typescript: require('typescript'),
+        typescript: require("typescript"),
+      }),
+      postCSS({
+        plugins: [require("autoprefixer")],
       }),
     ],
   };
@@ -206,7 +232,11 @@ Some highlights:
 
 - Our module exposes two types of module system: CommonJS - cjs and ECMAScript - esm
 - All packages in the **`peerDependencies`** section will be treated as external dependencies. It means Rollup does not include them in the bundling process.
-- We use Rollup TypeScript plugin to support TypeScript code.
+- We use some Rollup plugins:
+  - [@rollup/plugin-node-resolve](https://www.npmjs.com/package/[@rollup/plugin-node-resolve) resolves modules located in _node_modules_
+  - [@rollup/plugin-commonjs](https://www.npmjs.com/package/@rollup/plugin-commonjs) converts CommonJS modules to ES6 modules to be included in Rollup
+  - [rollup-plugin-typescript2](https://www.npmjs.com/package/rollup-plugin-typescript2) supports TypeScript
+  - [rollup-plugin-postcss](https://www.npmjs.com/package/rollup-plugin-postcss) compiles postcss in Rollup, with [autoprefixer](https://www.npmjs.com/package/autoprefixer) we can gain auto prefixes for all css styles for all browsers automatically. if you want to use scss/sass you must install `node-sass` additionally
 
 [Go back ⏪](#table-of-contents)
 
@@ -232,16 +262,54 @@ Some highlights:
 
 ### 8. Write code for our package
 
-- **_my-react-packages/src/Hello.tsx_**
+- **_my-react-packages/src/hello/styles.module.css_**
+
+  ```css
+  .helloCss {
+    margin: 0;
+    padding: 0;
+    color: red;
+    font-weight: bold;
+    font-size: 2rem;
+  }
+  ```
+- **_my-react-packages/src/hello/styles.module.scss_**
+
+  ```scss
+  $with: 600px;
+  $height: 200px;
+
+  .helloScss {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: $with;
+    height: $height;
+
+    border: 1px solid red;
+    border-radius: 8px;
+  }
+  ```
+
+- **_my-react-packages/src/hello/index.tsx_**
 
   ```tsx
   import React from 'react';
+  // Import css modules
+  import cssClasses from "./styles.module.css";
+  // Import scss modules
+  import scssClasses from "./styles.module.scss";
 
   export interface HelloProps {
     name: string;
   }
 
-  const Hello: React.FC<HelloProps> = ({ name }) => <span>Hello {name}!</span>;
+  const Hello: React.FC<HelloProps> = ({ name }) => (
+    <div className={scssClasses.helloScss}>
+      <p className={cssClasses.helloCss}>Hello, {name}</p>
+    </div>
+  );
 
   export default Hello;
 
@@ -250,8 +318,8 @@ Some highlights:
 - **_my-react-packages/src/index.ts_**
 
   ```typescript
-  export { default as Hello } from './Hello'; // export the default export from './Hello'
-  export * from './Hello'; // export all named exports from './Hello'
+  export { default as Hello } from './hello'; // export the default export from './hello', this is Hello component
+  export * from './hello'; // export all named exports from './hello' like HelloProps
 
   ```
 
