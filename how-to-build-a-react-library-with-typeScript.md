@@ -32,7 +32,7 @@ Today, I am going to show you how to build **a React library** with **TypeScript
 - [**`lerna`**](https://lerna.js.org/) - A tool for managing JavaScript projects with multiple packages.
 - [**`Yarn workspace`**](https://classic.yarnpkg.com/lang/en/docs/workspaces/) - Setup NodeJS workspace
 - [**`React Components`**](https://reactjs.org/docs/components-and-props.html) - Basic knowledge about React Components
-- Understand NodeJS module system [**`ECMAScript modules - esm`**](https://nodejs.org/api/esm.html#esm_modules_ecmascript_modules) and [**`CommonJS - cjs`**](https://nodejs.org/docs/latest/api/modules.html#modules_modules_commonjs_modules).
+- Understand NodeJS module system [**`ECMAScript modules - ESM`**](https://nodejs.org/api/esm.html#esm_modules_ecmascript_modules) and [**`CommonJS - cjs`**](https://nodejs.org/docs/latest/api/modules.html#modules_modules_commonjs_modules).
 
 ## Practices
 
@@ -160,7 +160,7 @@ Now our **`my-react-package`** *peerDependencies* section in the __package.json_
 
 Some highlights:
 
-- `outDir` stands for output directory after compiled TypeScript to the `target` ecmascript version `es5`
+- `outDir` stands for output directory after compiled TypeScript to the `target` ECMAScript version `es5`
 - Must use `"jsx": "react-jsx"` to use JSX compiler
 - Turn on `declaration` to extract type definitions
 - Folder "**node_modules**" and "**lib**" must be excluded while compiling TypeScript to JavaScript.
@@ -230,13 +230,13 @@ These above types support for importing css modules, scss modules.
 
   ```
 
-- Our module exposes two types of module system: CommonJS - cjs and ECMAScript - esm
+- Our module exposes two types of module system: CommonJS - cjs and ECMAScript - ESM
 - All packages in the **`peerDependencies`** section will be treated as external dependencies. It means Rollup does not include them in the bundling process.
 - We use some Rollup plugins:
   - [@rollup/plugin-node-resolve](https://www.npmjs.com/package/[@rollup/plugin-node-resolve) resolves modules located in _node_modules_
   - [@rollup/plugin-commonjs](https://www.npmjs.com/package/@rollup/plugin-commonjs) converts CommonJS modules to ES6 modules to be included in Rollup
   - [rollup-plugin-typescript2](https://www.npmjs.com/package/rollup-plugin-typescript2) supports TypeScript
-  - [rollup-plugin-postcss](https://www.npmjs.com/package/rollup-plugin-postcss) compiles postcss in Rollup, with [autoprefixer](https://www.npmjs.com/package/autoprefixer) we can gain auto prefixes for all css styles for all browsers automatically. if you want to use scss/sass you must install `node-sass` additionally
+  - [rollup-plugin-postcss](https://www.npmjs.com/package/rollup-plugin-postcss) compiles PostCSS in Rollup, with [autoprefixer](https://www.npmjs.com/package/autoprefixer) we can gain auto prefixes for all css styles for all browsers automatically. if you want to use SCSS/SASS you must install `node-sass` additionally
 
 [Go back ⏪](#table-of-contents)
 
@@ -255,12 +255,35 @@ These above types support for importing css modules, scss modules.
 
 - Here we define the main file for our project is `"./lib/cjs/index.js"`
 - Our package also expose esm module at `"./lib/esm/index.js"`
-- Type definitions will be includes at `"./lib/esm/index.d.ts"`
-- The last important is `"files"`, which tells NPM which files or folders will be packaged. For our package it will be `"lib"` folder
+- Type definitions will be included at `"./lib/esm/index.d.ts"`
+- The last important is `"files"`, which tells NPM which files or folders will be packaged. For our package, it will be `"lib"` folder
 
 [Go back ⏪](#table-of-contents)
 
 ### 8. Write code for our package
+
+- **_my-react-packages/src/hello/index.tsx_**
+
+  ```tsx
+  import React from 'react';
+  // Import css modules
+  import cssClasses from './styles.module.css';
+  // Import scss modules
+  import scssClasses from './styles.module.scss';
+
+  export interface HelloProps {
+    name: string;
+  }
+
+  const Hello: React.FC<HelloProps> = ({ name }) => (
+    <div className={scssClasses.helloScss}>
+      <p className={cssClasses.helloCss}>Hello, {name}</p>
+    </div>
+  );
+
+  export default Hello;
+
+  ```
 
 - **_my-react-packages/src/hello/styles.module.css_**
 
@@ -290,29 +313,6 @@ These above types support for importing css modules, scss modules.
     border: 1px solid red;
     border-radius: 8px;
   }
-  ```
-
-- **_my-react-packages/src/hello/index.tsx_**
-
-  ```tsx
-  import React from 'react';
-  // Import css modules
-  import cssClasses from './styles.module.css';
-  // Import scss modules
-  import scssClasses from './styles.module.scss';
-
-  export interface HelloProps {
-    name: string;
-  }
-
-  const Hello: React.FC<HelloProps> = ({ name }) => (
-    <div className={scssClasses.helloScss}>
-      <p className={cssClasses.helloCss}>Hello, {name}</p>
-    </div>
-  );
-
-  export default Hello;
-
   ```
 
 - **_my-react-packages/src/index.ts_**
@@ -396,7 +396,7 @@ These above types support for importing css modules, scss modules.
 
   ```
 
-In the `development` phase, you can write code and example **`parallelly`** by using:
+In the `development` phase, you can write code for **my-react-package** and **example-app** **`parallelly`** by using:
 
 - Start **`example-app`**:
 
@@ -405,7 +405,7 @@ In the `development` phase, you can write code and example **`parallelly`** by u
   yarn start;
   ```
 
-- Watch and build our package if any changes
+- Watch and build our package **my-react-package** if any changes
 
   ```sh
   yarn watch
@@ -446,8 +446,8 @@ Thank you and see you next time!
 - [**`Yarn workspace`**](https://classic.yarnpkg.com/lang/en/docs/workspaces/)
 - [**`React Components`**](https://reactjs.org/docs/components-and-props.html)
 - [**`NodeJS peerDependencies`**](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#peerdependencies)
-- [**`ECMAScript modules - esm`**](https://nodejs.org/api/esm.html#esm_modules_ecmascript_modules)
-- [**`CommonJS - cjs`**](https://nodejs.org/docs/latest/api/modules.html#modules_modules_commonjs_modules)
+- [**`ECMAScript modules - ESM`**](https://nodejs.org/api/esm.html#esm_modules_ecmascript_modules)
+- [**`CommonJS - CJS`**](https://nodejs.org/docs/latest/api/modules.html#modules_modules_commonjs_modules)
 - [**`EcmaScript Exports`**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export)
 
 [Go back ⏪](#table-of-contents)
