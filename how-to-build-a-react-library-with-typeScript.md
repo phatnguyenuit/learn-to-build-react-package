@@ -34,6 +34,10 @@ Today, I am going to show you how to build **a React library** with **TypeScript
 - [**`React Components`**](https://reactjs.org/docs/components-and-props.html) - Basic knowledge about React Components
 - Understand NodeJS module system [**`ECMAScript modules - ESM`**](https://nodejs.org/api/esm.html#esm_modules_ecmascript_modules) and [**`CommonJS - cjs`**](https://nodejs.org/docs/latest/api/modules.html#modules_modules_commonjs_modules).
 
+> **UPDATES:**
+  - **2022–01–29**: Add CSS/SCSS modules supports when building React library with TypeScript and Rollup. Check the updates on [section 5 (Configure TypeScript for my-react-package)](#5-configure-typescript-for-my-react-package) and [section 8 (Write code for our package)](#8-write-code-for-our-package).
+
+
 ## Practices
 
 ### 1. Create new project with package.json file
