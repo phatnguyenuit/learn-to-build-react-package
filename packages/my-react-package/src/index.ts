@@ -1,3 +1,2 @@
-export * from './components';
-export * from './utils';
-export * from './hooks';
+export { default as Hello } from './hello';
+export * from './hello';
